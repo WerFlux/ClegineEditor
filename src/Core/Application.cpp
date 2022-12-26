@@ -59,31 +59,58 @@ namespace Clegine {
 				glViewport(0, 0, width, height);
 			});
 
+		GLuint framebuffer;
+		glGenFramebuffers(1, &framebuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+		GLuint textureId;
+		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+		GLuint renderbufferId;
+		glGenRenderbuffers(1, &renderbufferId);
+		glBindRenderbuffer(GL_RENDERBUFFER, renderbufferId);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 512, 512);
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbufferId);
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+			LOG_ERROR("Framebuffer is not complete!");
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 		ImGuiIO& io = ImGUIContext::Get().Create();
+		IM_UNUSED(io);
 
 		while (IsOpen()) {
+			glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 			glClear(GL_COLOR_BUFFER_BIT);
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
 			ImGUIContext::Get().NewFrame();
 
-			ImGui::Begin("Hierarchy");
-
-			ImGui::End();
-
-			ImGui::Begin("Properties");
-
-			ImGui::End();
-
-			ImGui::Begin("Content Browser");
-
-			ImGui::End();
-
-			ImGui::Begin("Scene");
-
+			ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+			if (ImGui::Begin("Game Window")) {
+				ImVec2 pos = ImGui::GetCursorScreenPos();
+				ImDrawList* drawList = ImGui::GetWindowDrawList();
+				drawList->AddImage((void*)(intptr_t)textureId,
+					pos,
+					ImVec2(pos.x + 512, pos.y + 512),
+					ImVec2(0, 1),
+					ImVec2(1, 0));
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			}
 			ImGui::End();
 
 			ImGUIContext::Get().Update();
+
+			GLenum error = glGetError();
+			if (error != GL_NO_ERROR) {
+				LOG_ERROR("OpenGL error: {0}", error);
+			}
 
 			glfwSwapBuffers(mainWindow);
 			glfwPollEvents();

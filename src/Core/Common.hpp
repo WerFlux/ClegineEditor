@@ -4,6 +4,7 @@
 #include <Core/Platform.hpp>
 
 #define CLEGINE_DEBUG_ALWAYS
+#define CLEGINE_DISABLE_ASSERTING 0
 
 #define BIT(x)	(1 << x)
 

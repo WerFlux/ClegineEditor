@@ -33,7 +33,7 @@ int main() {
 	std::cout << entity2.GetComponentSize() << '\n';
 
 	registry.Each([&](auto& entity) {
-			std::cout << entity.GetUUID() << '\n';
-		});
+		std::cout << entity.GetUUID() << '\n';
+	});
 	return 0;
 }

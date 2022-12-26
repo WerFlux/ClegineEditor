@@ -1,12 +1,11 @@
 ## CECS (Clegine Entity Component System) Framework C++
-Simple header-only ECS (Entity Component System) framework that only for Clegine Core. 
-This ECS (Entity Component System) is part of Clegine Core Component.
-ECS will be placed inside Clegine Core cause the developer is dumb for making it into a dynamic library. Thank you!
+Is a simple header-only ECS (Entity Component System) framework that only for Clegine Core. 
 
 ### Example
 ```cpp
 #include <CECS.hpp>
 #include <glm.hpp>
+#include <iostream>
 
 struct TransformComponent : public CECS::IComponent {
 	glm::vec3 Position;
@@ -14,21 +13,24 @@ struct TransformComponent : public CECS::IComponent {
 	glm::vec3 Scale;
 }
 
-struct Camera : public CECS::IComponent {
-
+struct CameraComponent : public CECS::IComponent {
+	// Camera Code
 }
 
 int main() {
-	// Create main Registry from CECS namespace
+	// Create main Registry instances from CECS namespace
 	CECS::Registry registry;
-	// Entity is default class from CECS.
-	// You can use your own custom Entity class in the future!
+	// Create Entity using Registry Create (you can use "using namespace CECS" if you want to)
 	CECS::Entity object = registry.Create<TransformComponent>();
 	CECS::Entity camera = registry.create<TransformComponent>();
-	camera.AddComponent<CameraComponent>(camera);
+	// Add CameraComponent to camera Entity
+	camera.AddComponent<CameraComponent>();
+
+	// Expected to output: Camera has 2 components!
+	std::cout << "Camera has " << camera.GetComponentSize() << " components!\n";
 
 	// Get TransformComponent Position value
-	auto& objectPos = registry.GetComponent<TransformComponent>()->Position;
+	auto& objectPos = object.GetComponent<TransformComponent>()->Position;
 
 	// Now, 'objectPos' has value 'glm::vec3'. Lets manipulate the variable
 	objectPos.x = 2.5f;
@@ -39,6 +41,9 @@ int main() {
 	registry.Each([](auto& entity) {
 		
 	});
+
+	// Meh, this Camera is useless
+	registry.Destroy(camera);
 	return 0;
 }
 ```
@@ -46,7 +51,7 @@ int main() {
 ### Available Function
 
 CECS Registry
-- Create
+- Create 
 - Destroy
 - Each
 
@@ -56,7 +61,7 @@ CECS Entity
 - GetComponent
 - CopyComponent
 - GetComponentSize
-- IsComponentEqual / IsComponentSame (CECS 1.1)
+- GetUUID
 
 ### Documentation
-Soontm
+Coming Soon!

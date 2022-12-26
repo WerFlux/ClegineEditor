@@ -32,13 +32,7 @@ file(GLOB_RECURSE CLEGINE_SOURCE_FILES
     "${SOURCE_ROOT}/*.cpp"
 )
 
-add_executable(${PROJECT_NAME}
-    "src/CECS/UUID.hpp"
-    "src/CECS/Entity.hpp"
-    "src/CECS/Registry.hpp"
-    "src/CECS/CECS.hpp"
-    "src/CECS/main.cpp"
-)#${CLEGINE_INCLUDE_FILES} ${CLEGINE_SOURCE_FILES})
+add_executable(${PROJECT_NAME} ${CLEGINE_INCLUDE_FILES} ${CLEGINE_SOURCE_FILES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/include")
 target_include_directories(${PROJECT_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/src")
@@ -53,9 +47,9 @@ target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=address)
 # Add /MP to Compile Options
 set_property(TARGET ${PROJECT_NAME} PROPERTY COMPILE_OPTIONS "/MP")
 # Add /debug:fastline to Link Options
-set_property(TARGET ${PROJECT_NAME} PROPERTY LINK_OPTIONS /debug:fastlink)
+set_property(TARGET ${PROJECT_NAME} PROPERTY LINK_OPTIONS "/debug:fastlink")
 # Add /incremental to Link Options
-set_property(TARGET ${PROJECT_NAME} PROPERTY LINK_OPTIONS /incremental)
+set_property(TARGET ${PROJECT_NAME} PROPERTY LINK_OPTIONS "/incremental")
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME} PROPERTIES
