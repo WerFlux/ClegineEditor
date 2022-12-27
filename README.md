@@ -1,2 +1,2 @@
 # Clegine Editor
-Game Engine
+Is a x64 Windows Game Engine that use OpenGL rather than DirectX.
