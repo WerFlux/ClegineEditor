@@ -93,12 +93,12 @@ namespace Clegine {
 			ImGUIContext::Get().NewFrame();
 
 			ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
-			if (ImGui::Begin("Game Window")) {
+			if (ImGui::Begin("Scene")) {
 				ImVec2 pos = ImGui::GetCursorScreenPos();
-				ImDrawList* drawList = ImGui::GetWindowDrawList();
-				drawList->AddImage((void*)(intptr_t)textureId,
+				ImVec2 windowSize = ImGui::GetWindowSize();
+				ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)textureId,
 					pos,
-					ImVec2(pos.x + 512, pos.y + 512),
+					ImVec2(pos.x + windowSize.x, pos.y + windowSize.y),
 					ImVec2(0, 1),
 					ImVec2(1, 0));
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
