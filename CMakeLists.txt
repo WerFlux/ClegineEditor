@@ -14,6 +14,7 @@ file(GLOB_RECURSE CLEGINE_INCLUDE_FILES
     "${INCLUDE_ROOT}/CECS/*.hpp"
     "${INCLUDE_ROOT}/ImGUI/*.hpp"
     "${INCLUDE_ROOT}/ImGUI/*.cpp"
+    "${INCLUDE_ROOT}/stb/*.hpp"
     "${INCLUDE_ROOT}/GLAD/glad.c"
 )
 

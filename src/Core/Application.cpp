@@ -1,5 +1,6 @@
 #include <Core/Application.hpp>
 #include <Renderer/Shader.hpp>
+#include <Renderer/Texture.hpp>
 
 namespace Clegine {
 	Application::Application() { }
@@ -25,7 +26,7 @@ namespace Clegine {
 			});
 
 		int success = glfwInit();
-		ASSERT(success != 0 && "Fail when initializing GLFW!");
+		ASSERT(!success, "Fail when initializing GLFW!");
 		LOG_INFO("Initializing GLFW, success!");
 
 		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
@@ -33,17 +34,17 @@ namespace Clegine {
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
 		mainWindow = glfwCreateWindow(data.width, data.height, data.title.c_str(), nullptr, nullptr);
-		ASSERT(mainWindow != nullptr && "Fail creating main window!");
+		ASSERT(!mainWindow, "Fail creating main window!");
 		LOG_INFO("Creating main window, success!");
 		LOG_DEBUG("GLFW address of window={0}", fmt::ptr(mainWindow));
 
 		// Init OpenGL function (GLAD)
 		glfwMakeContextCurrent(mainWindow);
 		success = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		ASSERT(success != 0 && "Fail when initializing GLAD (OpenGL Function Loader)");
+		ASSERT(!success, "Fail when initializing GLAD (OpenGL Function Loader)");
 
 		// Make sure it's 4.3 or later
-		ASSERT((GLVersion.major == 4 && GLVersion.minor >= 3) &&
+		ASSERT(!(GLVersion.major == 4 && GLVersion.minor >= 3),
 			"Clegine Editor / Core requires atleast OpenGL version 4.3 or later");
 
 		// Send basic OpenGL information (Vendor, Renderer, and Version) to console
@@ -62,14 +63,15 @@ namespace Clegine {
 		GLuint framebuffer;
 		glGenFramebuffers(1, &framebuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-		GLuint textureId;
+		/*GLuint textureId;
 		glGenTextures(1, &textureId);
 		glBindTexture(GL_TEXTURE_2D, textureId);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);*/
+		Texture frameimage(512, 512, GL_RGBA, GL_RGBA);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, frameimage.GetID(), 0);
 		GLuint renderbufferId;
 		glGenRenderbuffers(1, &renderbufferId);
 		glBindRenderbuffer(GL_RENDERBUFFER, renderbufferId);
@@ -96,7 +98,7 @@ namespace Clegine {
 			if (ImGui::Begin("Scene")) {
 				ImVec2 pos = ImGui::GetCursorScreenPos();
 				ImVec2 windowSize = ImGui::GetWindowSize();
-				ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)textureId,
+				ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)frameimage.GetID(),
 					pos,
 					ImVec2(pos.x + windowSize.x, pos.y + windowSize.y),
 					ImVec2(0, 1),

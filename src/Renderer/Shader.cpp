@@ -54,7 +54,7 @@ namespace Clegine {
 			glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &length);
 			std::vector<GLchar> infoLog(length);
 			glGetProgramInfoLog(programId, length, &length, &infoLog[0]);
-			LOG_WARNING("Fail when linking Program (Id={0}): {1}", 
+			LOG_WARNING("Fail when linking program (Id={0}): {1}", 
 				programId, infoLog.data());
 			glDeleteProgram(programId);
 		}

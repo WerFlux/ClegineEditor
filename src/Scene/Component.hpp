@@ -4,7 +4,7 @@
 #include <EntryPoint.hpp>
 
 namespace Clegine {
-	struct TransformComponent : public CECS::IComponent {
+	/*struct TransformComponent : public CECS::IComponent {
 		glm::vec3 Position = glm::vec3(0.0f, 0.0f, 0.0f);
 		glm::vec3 Rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 		glm::vec3 Scale = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -21,7 +21,7 @@ namespace Clegine {
 
 	struct CameraComponent : public CECS::IComponent {
 
-	};
+	};*/
 }
 
 #endif // CLEGINE_SCENE_COMPONENT_HPP
