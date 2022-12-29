@@ -14,6 +14,8 @@ namespace Clegine {
 		ImGuiIO& Create();
 
 		void NewFrame();
+		void EndFrame();
+
 		void Update();
 	};
 }

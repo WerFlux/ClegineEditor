@@ -1,6 +1,4 @@
 #include <Core/Application.hpp>
-#include <Renderer/Shader.hpp>
-#include <Renderer/Texture.hpp>
 
 namespace Clegine {
 	Application::Application() { }
@@ -14,9 +12,22 @@ namespace Clegine {
 			GetCurrentProcessId(), std::this_thread::get_id());
 	}
 
+	const char* vertexShaderSource = "#version 330 core\n"
+		"layout (location = 0) in vec3 aPos;\n"
+		"void main()\n"
+		"{\n"
+		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+		"}\0";
+	const char* fragmentShaderSource = "#version 330 core\n"
+		"out vec4 FragColor;\n"
+		"void main()\n"
+		"{\n"
+		"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+		"}\n\0";
+
 	void Application::Init(const WindowData& data) {
 		wndData = data;
-		LOG_DEBUG("Address of WindowData={0}", fmt::ptr(&wndData));
+		LOG_DEBUG("Address of WindowData={0}, argument Data={1}", fmt::ptr(&wndData), fmt::ptr(&data));
 
 		LOG_INFO("Initializing Main Window, title={0}, width={1}, height={2}",
 			data.title, data.width, data.height);
@@ -53,44 +64,61 @@ namespace Clegine {
 		LOG_INFO("GPU Renderer: {0}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
 		LOG_INFO("OpenGL Version: {0}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
 
-		glfwGetWindowPos(mainWindow, &wndData.width, &wndData.height);
+		glfwGetWindowSize(mainWindow, &wndData.width, &wndData.height);
+		LOG_DEBUG("width={0} height={1}", wndData.width, wndData.height);
 		glfwSetWindowUserPointer(mainWindow, &wndData);
 
 		glfwSetFramebufferSizeCallback(mainWindow, [](GLFWwindow* wnd, int width, int height) {
-				glViewport(0, 0, width, height);
+				//glViewport(0, 0, width, height);
 			});
 
-		GLuint framebuffer;
-		glGenFramebuffers(1, &framebuffer);
-		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-		/*GLuint textureId;
-		glGenTextures(1, &textureId);
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glBindTexture(GL_TEXTURE_2D, 0);*/
-		Texture frameimage(512, 512, GL_RGBA, GL_RGBA);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, frameimage.GetID(), 0);
-		GLuint renderbufferId;
-		glGenRenderbuffers(1, &renderbufferId);
-		glBindRenderbuffer(GL_RENDERBUFFER, renderbufferId);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 512, 512);
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbufferId);
+		glViewport(0, 0, 512, 512);
 
-		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-			LOG_ERROR("Framebuffer is not complete!");
-		}
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		Shader shader;
+		shader.ReadFromRuntime(vertexShaderSource, fragmentShaderSource);
+		GLuint firstShader = shader.Compile();
+
+		float vertices[] = {
+			0.5f,  0.5f, 0.0f,  
+			0.5f, -0.5f, 0.0f, 
+			-0.5f, -0.5f, 0.0f, 
+			-0.5f,  0.5f, 0.0f
+		};
+		unsigned int indices[] = {
+			0, 1, 3,
+			1, 2, 3 
+		};
+		unsigned int VBO, VAO, EBO;
+		glGenVertexArrays(1, &VAO);
+		glGenBuffers(1, &VBO);
+		glGenBuffers(1, &EBO);
+
+		glBindVertexArray(VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+
+		Framebuffer FBO(512, 512, GL_RGBA, GL_RGBA);
 
 		ImGuiIO& io = ImGUIContext::Get().Create();
 		IM_UNUSED(io);
 
 		while (IsOpen()) {
-			glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-			glClear(GL_COLOR_BUFFER_BIT);
+			FBO.Bind();
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+			glUseProgram(firstShader);
+			glBindVertexArray(VAO);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 			ImGUIContext::Get().NewFrame();
 
@@ -98,15 +126,17 @@ namespace Clegine {
 			if (ImGui::Begin("Scene")) {
 				ImVec2 pos = ImGui::GetCursorScreenPos();
 				ImVec2 windowSize = ImGui::GetWindowSize();
-				ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)frameimage.GetID(),
+				ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)FBO.GetImageID(),
 					pos,
 					ImVec2(pos.x + windowSize.x, pos.y + windowSize.y),
 					ImVec2(0, 1),
 					ImVec2(1, 0));
-				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			}
 			ImGui::End();
 
+			FBO.UnBind();
+			
+			ImGUIContext::Get().EndFrame();
 			ImGUIContext::Get().Update();
 
 			GLenum error = glGetError();

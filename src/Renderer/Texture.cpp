@@ -19,7 +19,9 @@ namespace Clegine {
 		glBindTexture(GL_TEXTURE_2D, 0);
     }
 	
-	Texture::Texture(const char* path) {
+	Texture::Texture(const char* path) : 
+		width(0), height(0), internalFormat(0), dataFormat(0) {
+
 		std::ifstream file(path, std::ios::binary | std::ios::ate);
 		std::streamsize size = file.tellg();
 
@@ -52,8 +54,6 @@ namespace Clegine {
 			internalFormat = GL_RGB8;
 			dataFormat = GL_RGB;
 		}
-
-		ASSERT(internalFormat & dataFormat, "Image format not supported! (data and internal image format is not match)");
 
 		glGenTextures(1, &id);
 		glBindTexture(GL_TEXTURE_2D, id);

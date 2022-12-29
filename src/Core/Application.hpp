@@ -4,6 +4,8 @@
 #include <Core/Logger.hpp>
 
 #include <ImGUI/ImGUIContext.hpp>
+#include <Renderer/Shader.hpp>
+#include <Renderer/Framebuffer.hpp>
 
 namespace Clegine {
 	struct WindowData {

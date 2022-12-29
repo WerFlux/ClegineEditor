@@ -35,6 +35,10 @@ namespace Clegine {
 		ImGui::NewFrame();
 	}
 
+	void ImGUIContext::EndFrame() {
+		ImGui::EndFrame();
+	}
+
 	void ImGUIContext::Update() {
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

@@ -33,7 +33,7 @@ file(GLOB_RECURSE CLEGINE_SOURCE_FILES
     "${SOURCE_ROOT}/*.cpp"
 )
 
-add_executable(${PROJECT_NAME} ${CLEGINE_INCLUDE_FILES} ${CLEGINE_SOURCE_FILES})
+add_executable(${PROJECT_NAME} ${CLEGINE_INCLUDE_FILES} ${CLEGINE_SOURCE_FILES} "src/Renderer/Framebuffer.cpp")
 
 target_include_directories(${PROJECT_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/include")
 target_include_directories(${PROJECT_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/src")
@@ -52,7 +52,6 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY LINK_OPTIONS "/debug:fastlink")
 # Add /incremental to Link Options
 set_property(TARGET ${PROJECT_NAME} PROPERTY LINK_OPTIONS "/incremental")
 
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME} PROPERTIES
         CXX_STANDARD 20
         CXX_STANDARD_REQUIRED OFF

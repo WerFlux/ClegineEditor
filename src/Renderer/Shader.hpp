@@ -1,12 +1,12 @@
 #ifndef CLEGINE_GRAPHICS_SHADER_HPP
 #define CLEGINE_GRAPHICS_SHADER_HPP
 
-#include <Core/Logger.hpp>
+#include <EntryPoint.hpp>
 
-#include <unordered_map>
+#include <unordered_map>	
 
 namespace Clegine {
-	class Shader {
+	class Shader : public Singleton<Shader> {
 	public:
 		Shader() = default;
 		~Shader() = default;
