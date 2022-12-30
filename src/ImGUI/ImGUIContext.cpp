@@ -9,7 +9,7 @@ namespace Clegine {
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
-		LOG_DEBUG("ImGUIContext terminated for processId={0}, threadId={1}",
+		LOG_DEBUG("ImGUIContext terminated for processId={0} threadId={1}",
 			GetCurrentProcessId(), std::this_thread::get_id());
 	}
 
@@ -33,6 +33,10 @@ namespace Clegine {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+	}
+
+	void ImGUIContext::EndFrame() {
+		ImGui::EndFrame();
 	}
 
 	void ImGUIContext::Update() {

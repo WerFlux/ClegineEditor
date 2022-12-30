@@ -2,7 +2,8 @@
 #define CLEGINE_ENTRYPOINT_HPP
 
 // Fuck off WINAPI
-#pragma warning(disable: 4005)
+#pragma warning(disable: 4005 26495)
+
 #include <string>
 #include <vector>
 #include <functional>
