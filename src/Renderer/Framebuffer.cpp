@@ -2,7 +2,9 @@
 #include "Framebuffer.hpp"
 
 namespace Clegine {
-	Framebuffer::Framebuffer(GLuint width, GLuint height, GLenum format1, GLenum format2) {
+	Framebuffer::Framebuffer(GLuint _width, GLuint _height, GLenum format1, GLenum format2) :
+		width(_width), height(_height) 
+	{
 		glGenFramebuffers(1, &Id);
 		glBindFramebuffer(GL_FRAMEBUFFER, Id);
 
@@ -26,6 +28,7 @@ namespace Clegine {
 
 	void Framebuffer::Bind() {
 		glBindFramebuffer(GL_FRAMEBUFFER, Id);
+		glViewport(0, 0, width, height);
 	}
 
 	void Framebuffer::UnBind() {

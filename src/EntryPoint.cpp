@@ -9,7 +9,8 @@ int main() {
     const WindowData data = {
         "Clegine Editor",
         800,
-        600
+        600,
+        false
     };
 
     Application::Get().Init(data);

@@ -13,17 +13,18 @@ namespace Clegine {
 		Framebuffer(const Framebuffer&) = delete;
 		Framebuffer& operator=(const Framebuffer&) = delete;
 	public:
-		Framebuffer(GLuint width, GLuint height, GLenum format1, GLenum format2);
+		Framebuffer(GLuint _width, GLuint _height, GLenum format1, GLenum format2);
 		~Framebuffer();
 
 		void Bind();
 		void UnBind();
 
-		/* Get Framebuffer Image / Texture ID */
+		/* Get Framebuffer Image (Texture) ID */
 		inline GLuint GetImageID() const noexcept { return imageId; }
 		/* Get Framebuffer ID */
 		inline GLuint GetID() const noexcept { return Id; }
 	private:
+		GLuint width, height;
 		GLuint imageId;
 		GLuint Id;
 	};
