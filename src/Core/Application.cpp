@@ -153,7 +153,7 @@ namespace Clegine {
 	}
 
 	bool Application::IsVSync() {
-		return mainData.VSync == true;
+		return mainData.VSync;
 	}
 	
 	void Application::SetVSync(bool toggle) {
