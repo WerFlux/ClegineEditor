@@ -95,6 +95,8 @@ namespace Clegine {
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 
+		LOG_DEBUG("VSync is={0}", IsVSync());
+
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
@@ -148,6 +150,10 @@ namespace Clegine {
 
 	bool Application::IsOpen() {
 		return static_cast<bool>(glfwWindowShouldClose(mainWindow) != 1);
+	}
+
+	bool Application::IsVSync() {
+		return mainData.VSync == true;
 	}
 	
 	void Application::SetVSync(bool toggle) {

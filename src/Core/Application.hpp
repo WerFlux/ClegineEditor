@@ -24,6 +24,8 @@ namespace Clegine {
 		void Run();
 
 		void SetVSync(bool toggle);
+
+		bool IsVSync();
 		bool IsOpen();
 
 		inline bool IsVSync() const { return mainData.VSync; }

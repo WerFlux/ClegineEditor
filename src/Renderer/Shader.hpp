@@ -6,7 +6,7 @@
 #include <unordered_map>	
 
 namespace Clegine {
-	class Shader : public Singleton<Shader> {
+	class Shader {
 	public:
 		Shader() = default;
 		~Shader() = default;

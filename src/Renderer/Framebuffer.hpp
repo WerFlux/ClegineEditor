@@ -21,7 +21,7 @@ namespace Clegine {
 
 		/* Get Framebuffer Image (Texture) ID */
 		inline GLuint GetImageID() const noexcept { return imageId; }
-		/* Get Framebuffer ID */
+		/* Get Framebuffer generated ID */
 		inline GLuint GetID() const noexcept { return Id; }
 	private:
 		GLuint width, height;
