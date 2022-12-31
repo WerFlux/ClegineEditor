@@ -2,6 +2,7 @@
 #define CLEGINE_GRAPHICS_SHADER_HPP
 
 #include <EntryPoint.hpp>
+#include <Renderer/UniformBuffer.hpp>
 
 #include <unordered_map>	
 

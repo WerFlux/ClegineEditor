@@ -2,6 +2,7 @@
 #define CLEGINE_RENDERER_TEXTURE_HPP
 
 #include <EntryPoint.hpp>
+#include <Core/Logger.hpp>
 #include <fstream>
 
 namespace Clegine {

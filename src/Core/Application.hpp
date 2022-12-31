@@ -1,9 +1,11 @@
 #ifndef CLEGINE_CORE_APPLICATION_HPP
 #define CLEGINE_CORE_APPLICATION_HPP
 
+#include <EntryPoint.hpp>
 #include <Core/Logger.hpp>
 
 #include <ImGUI/ImGUIContext.hpp>
+#include <Renderer/OrthoCamera.hpp>
 #include <Renderer/Shader.hpp>
 #include <Renderer/Framebuffer.hpp>
 

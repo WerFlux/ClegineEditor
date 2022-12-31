@@ -1,22 +1,23 @@
 #ifndef CLEGINE_GRAPHICS_UNIBUFF_HPP
 #define CLEGINE_GRAPHICS_UNIBUFF_HPP
 
+#include <EntryPoint.hpp>
 #include <Core/Logger.hpp>
 
 namespace Clegine {
 	/* Begin Uniform Buffer 1 Dimension (Vector1 in GLM) */
-	struct UniformBuffer1D {
-		static void SetInt(GLuint programId, const GLchar* locName, GLint value) {
+	struct UniformBuffer1D : public Singleton<UniformBuffer1D> {
+		void SetInt(GLuint programId, const GLchar* locName, GLint value) {
 			GLint location = glGetUniformLocation(programId, locName);
 			glUniform1i(location, value);
 		}
 
-		static void SetFloat(GLuint programId, const GLchar* locName, GLfloat value) {
+		void SetFloat(GLuint programId, const GLchar* locName, GLfloat value) {
 			GLint location = glGetUniformLocation(programId, locName);
 			glUniform1f(location, value);
 		}
 
-		static void SetDouble(GLuint programId, const GLchar* locName, GLdouble value) {
+		void SetDouble(GLuint programId, const GLchar* locName, GLdouble value) {
 			GLint location = glGetUniformLocation(programId, locName);
 			glUniform1d(location, value);
 		}
@@ -24,18 +25,18 @@ namespace Clegine {
 	/* End of Uniform Buffer 1 Dimension */
 
 	/* Begin Uniform Buffer 2 Dimension (Vector2 in GLM) */
-	struct UniformBuffer2D {
-		static void SetInt(GLuint programId, const GLchar* locName, GLint val1, GLint val2) {
+	struct UniformBuffer2D : public Singleton<UniformBuffer2D> {
+		void SetInt(GLuint programId, const GLchar* locName, GLint val1, GLint val2) {
 			GLint location = glGetUniformLocation(programId, locName);
 			glUniform2i(location, val1, val2);
 		}
 
-		static void SetFloat(GLuint programId, const GLchar* locName, GLfloat val1, GLfloat val2) {
+		void SetFloat(GLuint programId, const GLchar* locName, GLfloat val1, GLfloat val2) {
 			GLint location = glGetUniformLocation(programId, locName);
 			glUniform2f(location, val1, val2);
 		}
 
-		static void SetDouble(GLuint programId, const GLchar* locName, GLdouble val1, GLdouble val2) {
+		void SetDouble(GLuint programId, const GLchar* locName, GLdouble val1, GLdouble val2) {
 			GLint location = glGetUniformLocation(programId, locName);
 			glUniform2d(location, val1, val2);
 		}
@@ -43,18 +44,18 @@ namespace Clegine {
 	/* End of Uniform Buffer 2 Dimension */
 
 	/* Begin Uniform Buffer 3 Dimension (Vector3 in GLM) */
-	struct UniformBuffer3D {
-		static void SetInt(GLuint programId, const GLchar* locName, GLint val1, GLint val2, GLint val3) {
+	struct UniformBuffer3D : public Singleton<UniformBuffer3D> {
+		void SetInt(GLuint programId, const GLchar* locName, GLint val1, GLint val2, GLint val3) {
 			GLint location = glGetUniformLocation(programId, locName);
 			glUniform3i(location, val1, val2, val3);
 		}
 
-		static void SetFloat(GLuint programId, const GLchar* locName, GLfloat val1, GLfloat val2, GLfloat val3) {
+		void SetFloat(GLuint programId, const GLchar* locName, GLfloat val1, GLfloat val2, GLfloat val3) {
 			GLint location = glGetUniformLocation(programId, locName);
 			glUniform3f(location, val1, val2, val3);
 		}
 
-		static void SetDouble(GLuint programId, const GLchar* locName, GLdouble val1, GLdouble val2, GLdouble val3) {
+		void SetDouble(GLuint programId, const GLchar* locName, GLdouble val1, GLdouble val2, GLdouble val3) {
 			GLint location = glGetUniformLocation(programId, locName);
 			glUniform3d(location, val1, val2, val3);
 		}
@@ -62,20 +63,20 @@ namespace Clegine {
 	/* End of Uniform Buffer 2 Dimension */
 
 	/* Begin Uniform Buffer 4 Dimension (Vector4 (if exist) in GLM) */
-	struct UniformBuffer4D {
-		static void SetInt(GLuint programId, const GLchar* locName, 
+	struct UniformBuffer4D : public Singleton<UniformBuffer4D> {
+		void SetInt(GLuint programId, const GLchar* locName, 
 			GLint val1, GLint val2, GLint val3, GLint val4) {
 			GLint location = glGetUniformLocation(programId, locName);
 			glUniform4i(location, val1, val2, val3, val4);
 		}
 
-		static void SetFloat(GLuint programId, const GLchar* locName, 
+		void SetFloat(GLuint programId, const GLchar* locName, 
 			GLfloat val1, GLfloat val2, GLfloat val3, GLfloat val4) {
 			GLint location = glGetUniformLocation(programId, locName);
 			glUniform4f(location, val1, val2, val3, val4);
 		}
 
-		static void SetDouble(GLuint programId, const GLchar* locName, 
+		void SetDouble(GLuint programId, const GLchar* locName, 
 			GLdouble val1, GLdouble val2, GLdouble val3, GLdouble val4) {
 			GLint location = glGetUniformLocation(programId, locName);
 			glUniform4d(location, val1, val2, val3, val4);
@@ -84,8 +85,8 @@ namespace Clegine {
 	/* End of Uniform Buffer 4 Dimension */
 
 	/* Begin Uniform Buffer Matrix 4x4 (mat4 in GLM) */
-	struct UniformBufferMatrix4x4 {
-		static void Set(GLuint programId, const GLchar* locName, const glm::mat4& mat) {
+	struct UniformBufferMatrix4x4 : public Singleton<UniformBufferMatrix4x4> {
+		void Set(GLuint programId, const GLchar* locName, const glm::mat4& mat) {
 			GLint location = glGetUniformLocation(programId, locName);
 			glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
 		}

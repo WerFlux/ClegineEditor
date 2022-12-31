@@ -24,11 +24,8 @@
 #include <ImGUI/imgui_impl_glfw.h>
 #include <ImGUI/imgui_internal.h>
 
-#include <Core/Platform.hpp>
 #include <Core/Common.hpp>
 #include <Core/Assert.hpp>
 #include <Core/Singleton.hpp>
-
-#include <Core/Logger.hpp>
 
 #endif // CLEGINE_ENTRYPOINT_HPP

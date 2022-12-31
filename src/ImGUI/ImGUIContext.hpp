@@ -2,7 +2,7 @@
 #define CLEGINE_GUI_IMGUI_CONTEXT_HPP
 
 #include <EntryPoint.hpp>
-
+#include <Core/Logger.hpp>
 #include <Core/Application.hpp>
 
 namespace Clegine {

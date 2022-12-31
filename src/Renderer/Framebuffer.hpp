@@ -5,17 +5,12 @@
 #include <Renderer/Texture.hpp>
 
 namespace Clegine {
-	class Framebuffer {
-	private:
-		/* Do not allow creating Framebuffer instance without arguments */
-		Framebuffer() = delete;
-		/* Do not allow too copy other Framebuffer */
-		Framebuffer(const Framebuffer&) = delete;
-		Framebuffer& operator=(const Framebuffer&) = delete;
+	class Framebuffer : public Singleton<Framebuffer>{
 	public:
-		Framebuffer(GLuint _width, GLuint _height, GLenum format1, GLenum format2);
+		Framebuffer();
 		~Framebuffer();
 
+		void Create(GLuint _width, GLuint _height, GLenum format1, GLenum format2);
 		void Bind();
 		void UnBind();
 

@@ -33,7 +33,7 @@ file(GLOB_RECURSE CLEGINE_SOURCE_FILES
     "${SOURCE_ROOT}/*.cpp"
 )
 
-add_executable(${PROJECT_NAME} ${CLEGINE_INCLUDE_FILES} ${CLEGINE_SOURCE_FILES} "src/Renderer/Framebuffer.cpp")
+add_executable(${PROJECT_NAME} ${CLEGINE_INCLUDE_FILES} ${CLEGINE_SOURCE_FILES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/include")
 target_include_directories(${PROJECT_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/src")

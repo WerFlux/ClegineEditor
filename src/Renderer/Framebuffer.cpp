@@ -2,9 +2,22 @@
 #include "Framebuffer.hpp"
 
 namespace Clegine {
-	Framebuffer::Framebuffer(GLuint _width, GLuint _height, GLenum format1, GLenum format2) :
-		width(_width), height(_height) 
-	{
+	Framebuffer::Framebuffer() { }
+
+	Framebuffer::~Framebuffer() {
+		glDeleteFramebuffers(1, &Id);
+		glDeleteTextures(1, &imageId);
+
+		LOG_DEBUG("Framebuffer terminated for processId={0} threadId={1}",
+			GetCurrentProcessId(), std::this_thread::get_id());
+	}
+
+	void Framebuffer::Create(GLuint _width, GLuint _height, GLenum format1, GLenum format2) {
+		width = _width;
+		height = _height;
+
+		glViewport(0, 0, width, height);
+
 		glGenFramebuffers(1, &Id);
 		glBindFramebuffer(GL_FRAMEBUFFER, Id);
 
@@ -17,18 +30,12 @@ namespace Clegine {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, imageId, 0);
 		ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE, "Framebuffer is not complete!");
-		
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
 
-	Framebuffer::~Framebuffer() {
-		glDeleteFramebuffers(1, &Id);
-		glDeleteTextures(1, &imageId);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	void Framebuffer::Bind() {
 		glBindFramebuffer(GL_FRAMEBUFFER, Id);
-		glViewport(0, 0, width, height);
 	}
 
 	void Framebuffer::UnBind() {

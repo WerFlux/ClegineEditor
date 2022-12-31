@@ -1,7 +1,7 @@
 #ifndef CLEGINE_CORE_LOGGER_HPP
 #define CLEGINE_CORE_LOGGER_HPP
 
-#include <EntryPoint.hpp>
+#include <memory>
 
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>

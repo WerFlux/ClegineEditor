@@ -12,18 +12,24 @@ namespace Clegine {
 			GetCurrentProcessId(), std::this_thread::get_id());
 	}
 
-	const char* vertexShaderSource = "#version 330 core\n"
+	const char* vertexShaderSource =
+		"#version 330 core\n"
 		"layout (location = 0) in vec3 aPos;\n"
+		"uniform vec3 size;\n"
+		"uniform mat4 transform;\n"
 		"void main()\n"
 		"{\n"
-		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+		"   gl_Position = transform * vec4(size.x * aPos.x, size.y * aPos.y, size.z * aPos.z, 1.0);\n"
 		"}\0";
-	const char* fragmentShaderSource = "#version 330 core\n"
+	const char* fragmentShaderSource =
+		"#version 330 core\n"
 		"out vec4 FragColor;\n"
+		"uniform vec4 color;\n"
 		"void main()\n"
 		"{\n"
-		"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+		"   FragColor = color;\n"
 		"}\n\0";
+
 
 	void Application::Init(const WindowData& data) {
 		mainData = data;
@@ -95,17 +101,26 @@ namespace Clegine {
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 
-		LOG_DEBUG("VSync is={0}", IsVSync());
-
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
-		Framebuffer FBO(512, 512, GL_RGBA, GL_RGBA);
+		glm::vec3 Position(50.0f, 50.0f, 0.0f);
+		glm::vec3 Scale(1.0f, 1.0f, 0.0f);
+
+		float Color[4] = { 0.8f, 0.3f, 0.02f, 1.0f };
+
+		Framebuffer::Get().Create(1280, 720, GL_RGBA, GL_RGBA);
 
 		ImGuiIO& io = ImGUIContext::Get().Create(); IM_UNUSED(io);
 
+		ImGuiStyle& style = ImGui::GetStyle();
+		style.WindowRounding = 10.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f;	
+
+		OrthoCamera::Get().SetProjection(0.0f, 100.0f, 100.0f, 0.0f);
+
 		while (IsOpen()) {
-			FBO.Bind();
+			Framebuffer::Get().Bind();
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
@@ -114,22 +129,62 @@ namespace Clegine {
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 			ImGUIContext::Get().NewFrame();
-
-			ImGui::ShowDemoWindow();
-
 			ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
-			if (ImGui::Begin("Scene")) {
-				ImVec2 pos = ImGui::GetCursorScreenPos();
-				ImVec2 windowSize = ImGui::GetWindowSize();
-				ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)FBO.GetImageID(),
-					pos,
-					ImVec2(pos.x + windowSize.x, pos.y + windowSize.y),
-					ImVec2(0, 1),
-					ImVec2(1, 0));
-			}
+
+			ImGui::Begin("Properties");
+			ImGui::Text("Position");
+			ImGui::SameLine(0.0f, 25.f);
+
+			ImGui::Text("X");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(50.f);
+			ImGui::InputFloat("##POSX1", &Position.x, 0.0f, 0.0f, "%.2f");
+			ImGui::SameLine(0.0f, 5.f);
+
+			ImGui::Text("Y");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(50.f);
+			ImGui::InputFloat("##POSY1", &Position.y, 0.0f, 0.0f, "%.2f");
+			ImGui::Separator();
+
+			ImGui::Text("Scale");
+			ImGui::SameLine(0.0f, 46.f);
+
+			ImGui::Text("X");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(50.f);
+			ImGui::InputFloat("##SCALEX1", &Scale.x, 0.0f, 0.0f, "%.2f");
+			ImGui::SameLine(0.0f, 5.f);
+
+			ImGui::Text("Y");
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(50.f);
+			ImGui::InputFloat("##SCALEY1", &Scale.y, 0.0f, 0.0f, "%.2f");
+			ImGui::Separator();
+
+			ImGui::ColorEdit4("Color", Color);
 			ImGui::End();
 
-			FBO.UnBind();
+			glm::mat4 model = glm::translate(glm::mat4(1.0f), Position) * glm::scale(glm::mat4(1.0f), Scale);
+			glm::mat4 MVP = OrthoCamera::Get().GetProjection() * model;
+			
+			glUseProgram(firstShader);
+			UniformBuffer3D::Get().SetFloat(firstShader, "size", Scale.x, Scale.y, Scale.z);
+			UniformBuffer4D::Get().SetFloat(firstShader, "color", Color[0], Color[1], Color[2], Color[3]);
+			UniformBufferMatrix4x4::Get().Set(firstShader, "transform", MVP);
+			glUseProgram(0);
+
+			ImGui::Begin("Scene");
+			ImVec2 pos = ImGui::GetCursorScreenPos();
+			ImVec2 windowSize = ImGui::GetWindowSize();
+			ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)Framebuffer::Get().GetImageID(),
+				pos,
+				ImVec2(pos.x + windowSize.x, pos.y + windowSize.y),
+				ImVec2(0, 1),
+				ImVec2(1, 0));
+			ImGui::End();
+
+			Framebuffer::Get().UnBind();
 			
 			ImGUIContext::Get().EndFrame();
 			ImGUIContext::Get().Update();
